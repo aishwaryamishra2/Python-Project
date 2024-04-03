@@ -1,0 +1,68 @@
++*In[4]:*+
+[source, ipython3]
+----
+class RestaurantMenu:
+    def __init__(self):
+        self.menu = {}
+        self.next_food_id = 1
+
+    def add_food(self, name, quantity, price, discount, stock):
+        food_id = self.next_food_id
+        self.menu[food_id] = {
+            'name': name,
+            'quantity': quantity,
+            'price': price,
+            'discount': discount,
+            'stock': stock
+        }
+        self.next_food_id += 1
+        return food_id
+
+    def edit_food(self, food_id, **updates):
+        if food_id in self.menu:
+            self.menu[food_id].update(updates)
+        else:
+            raise KeyError(f"Food ID {food_id} not found")
+
+    def view_menu(self):
+        return self.menu
+
+    def remove_food(self, food_id):
+        if food_id in self.menu:
+            del self.menu[food_id]
+        else:
+            raise KeyError(f"Food ID {food_id} not found")
+
+# Example usage
+menu = RestaurantMenu()
+
+# Add new food items
+chicken_tikka_masala_id = menu.add_food("Chicken Tikka Masala", 4, 250, 10, 50)
+vegan_burger_id = menu.add_food("Vegan Burger", 1, 180, 0, 20)
+
+# View the list of all food items
+print(menu.view_menu())
+
+# Edit a food item
+menu.edit_food(chicken_tikka_masala_id, price=270)
+
+# Remove a food item
+menu.remove_food(vegan_burger_id)
+
+# View the updated menu
+print(menu.view_menu())
+----
+
+
++*Out[4]:*+
+----
+{1: {'name': 'Chicken Tikka Masala', 'quantity': 4, 'price': 250, 'discount': 10, 'stock': 50}, 2: {'name': 'Vegan Burger', 'quantity': 1, 'price': 180, 'discount': 0, 'stock': 20}}
+{1: {'name': 'Chicken Tikka Masala', 'quantity': 4, 'price': 270, 'discount': 10, 'stock': 50}}
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+
+----

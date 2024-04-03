@@ -1,0 +1,92 @@
++*In[10]:*+
+[source, ipython3]
+----
+class User:
+    def __init__(self, user_id, name, email, phone_number, address):
+        self.user_id = user_id
+        self.name = name
+        self.email = email
+        self.phone_number = phone_number
+        self.address = address
+        self.orders = []
+
+    def place_order(self, menu, food_ids):
+        # Get the food items from the menu using their IDs
+        food_items = [menu.get_food(food_id) for food_id in food_ids if food_id in menu.menu]
+
+        # Calculate the total price of the order
+        total_price = sum(food_item['price'] * food_item['quantity'] for food_item in food_items)
+
+        # Apply any discounts to the order
+        discount = sum(food_item['discount'] for food_item in food_items)
+        total_price -= total_price * discount / 100 if discount > 0 else 0
+
+        # Create a new order and add it to the user's order history
+        order = {
+            'order_id': len(self.orders) + 1,
+            'user_id': self.user_id,
+            'food_items': food_items,
+            'total_price': total_price,
+            'timestamp': datetime.now()
+        }
+        self.orders.append(order)
+
+        # Remove the food items from the menu stock
+        for food_item in food_items:
+            menu.edit_food(food_item['food_id'], stock=food_item['stock'] - food_item['quantity'])
+
+        return order
+
+    def view_order_history(self):
+        return self.orders
+
+    def update_profile(self, **updates):
+        self.__dict__.update(updates)
+
+class FoodMenu:
+    def __init__(self):
+        self.menu = []
+        self.next_food_id = 1
+
+    def add_food(self, name, quantity, price, discount, stock):
+        food = {
+            'food_id': self.next_food_id,
+            'name': name,
+            'quantity': quantity,
+            'price': price,
+            'discount': discount,
+            'stock': stock
+        }
+        self.menu.append(food)
+        self.next_food_id += 1
+        return food
+
+    def edit_food(self, food_id, **updates):
+        for food in self.menu:
+            if food['food_id'] == food_id:
+                food.update(updates)
+                return
+        raise ValueError(f"Food ID {food_id} not found")
+
+    def get_food(self, food_id):
+        for food in self.menu:
+            if food['food_id'] == food_id:
+                return food
+        raise ValueError(f"Food ID {food_id} not found")
+
+
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+
+----
